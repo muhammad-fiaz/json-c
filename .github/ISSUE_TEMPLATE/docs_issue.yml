@@ -1,0 +1,28 @@
+name: Documentation Issue
+description: Report a problem in the json-c documentation
+title: "[DOCS] "
+labels: ["documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for improving the documentation.
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: Which page contains the issue?
+      placeholder: /guide/getting-started
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: Issue
+      description: What needs to be corrected?
+    validations:
+      required: true
+  - type: textarea
+    id: fix
+    attributes:
+      label: Suggested Fix

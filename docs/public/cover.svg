@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="json-c social preview">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#020617"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.28" cy="0.2" r="0.8">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="mark" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#1d4ed8"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <circle cx="980" cy="146" r="220" fill="#1d4ed8" opacity="0.14"/>
+  <circle cx="1030" cy="178" r="140" fill="#f59e0b" opacity="0.14"/>
+  <g transform="translate(88 120)">
+    <rect width="160" height="160" rx="40" fill="url(#mark)"/>
+    <circle cx="80" cy="80" r="48" fill="none" stroke="#ffffff" stroke-width="12" opacity="0.18"/>
+    <path d="M50 58c0-6 5-12 12-12h40c10 0 18 8 18 18s-8 18-18 18H76c-6 0-10 4-10 10s4 10 10 10h22c10 0 18 8 18 18s-8 18-18 18H62c-7 0-12-5-12-12" fill="none" stroke="#f8fafc" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="300" y="244" fill="#ffffff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="92" font-weight="700">json-c</text>
+  <text x="300" y="316" fill="#cbd5e1" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="34" font-weight="400">Lightweight, modular JSON for ISO C</text>
+  <text x="300" y="388" fill="#e2e8f0" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="26">Parser · DOM · Serializer · Validation · Memory</text>
+  <text x="300" y="462" fill="#94a3b8" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="22">muhammad-fiaz / json-c</text>
+</svg>

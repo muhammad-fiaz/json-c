@@ -1,0 +1,20 @@
+name: Help Wanted
+description: A task that needs contributor attention
+title: "[HELP] "
+labels: ["help wanted"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for contributor-friendly tasks that need help.
+  - type: textarea
+    id: task
+    attributes:
+      label: Task
+      description: What work remains?
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes

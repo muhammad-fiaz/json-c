@@ -1,0 +1,53 @@
+name: Bug Report
+description: Report a defect in json-c
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve json-c.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What went wrong?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: List the exact steps needed to trigger the problem.
+      placeholder: |
+        1. Parse this input
+        2. Call this function
+        3. Observe the failure
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: json-c Version
+      placeholder: 0.1.0
+  - type: input
+    id: platform
+    attributes:
+      label: Platform
+      placeholder: Windows, Linux, macOS, Android, iOS
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional Context
