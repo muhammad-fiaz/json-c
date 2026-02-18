@@ -30,10 +30,30 @@ pkg-config --cflags --libs json-c
 
 ## Package managers
 
-- vcpkg: planned package layout and port file
-- Conan: planned recipe and package metadata
-- Homebrew: planned formula support
-- MSYS2: planned mingw packaging
+- vcpkg: manifest support via `vcpkg.json`
+- Conan: recipe support via `conanfile.py`
+- xmake: build and package support via `xmake.lua`
+- Homebrew: future formula support
+- MSYS2: future mingw packaging
+
+## Language support
+
+json-c is intended to compile with widely used C and C++ language modes:
+
+- C89 / ANSI C
+- C99
+- C11
+- C17
+- C23
+- C++98
+- C++03
+- C++11
+- C++14
+- C++17
+- C++20
+- C++23
+
+If you need stricter portability, keep to the subset required by your compiler and target platform.
 
 ## Source layout
 

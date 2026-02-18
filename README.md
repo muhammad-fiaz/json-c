@@ -20,14 +20,6 @@ json-c is a lightweight, super fast, modular, dependency-free JSON library for C
 > [!NOTE]
 > **Project status:** this repository is actively evolving. The initial goal is a clean, well-documented, and production-focused C foundation rather than a copy of any existing JSON library.
 
-## Project Links
-
-- Website: [muhammadfiaz.com](https://muhammadfiaz.com)
-- GitHub: [muhammad-fiaz](https://github.com/muhammad-fiaz)
-- Documentation: [muhammad-fiaz.github.io/json-c](https://muhammad-fiaz.github.io/json-c/)
-- LinkedIn: [Muhammad Fiaz](https://www.linkedin.com/in/muhammad-fiaz-)
-- X: [@muhammadfiaz_](https://x.com/muhammadfiaz_)
-
 ## Highlights
 
 - ISO C public API with explicit ownership rules
@@ -35,6 +27,8 @@ json-c is a lightweight, super fast, modular, dependency-free JSON library for C
 - UTF-8 aware parsing and escaping
 - Portable CMake build with package files
 - VitePress documentation with SEO metadata and GitHub Pages hosting
+- Conan, vcpkg, and xmake support through repository manifests
+- Broad C and C++ compiler compatibility across modern toolchains
 
 ## Quick Build
 
@@ -79,6 +73,16 @@ int main(void) {
 
 - [Contributing](CONTRIBUTING.md)
 - [Security](SECURITY.md)
+
+## Supported Toolchains
+
+json-c is intended to build cleanly with mainstream C and C++ toolchains, including C89/C99/C11/C17/C23 and C++98/C++03/C++11/C++14/C++17/C++20/C++23 where the compiler and standard library support the chosen language mode.
+
+## Package Managers
+
+- Conan: `conanfile.py`
+- vcpkg: `vcpkg.json`
+- xmake: `xmake.lua`
 
 ## License
 

@@ -1,0 +1,8 @@
+{
+  "name": "json-c",
+  "version-string": "0.1.0",
+  "description": "Lightweight, modular, dependency-free JSON library for ISO C and C++",
+  "homepage": "https://github.com/muhammad-fiaz/json-c",
+  "license": "MIT",
+  "supports": "!uwp"
+}
