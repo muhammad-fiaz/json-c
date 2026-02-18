@@ -1,28 +1,18 @@
 <div align="center">
-	<p>
-		<a href="https://muhammad-fiaz.github.io/json-c/"><img src="https://img.shields.io/badge/docs-muhammad--fiaz.github.io-blue" alt="Documentation"></a>
-		<a href="https://github.com/muhammad-fiaz/json-c/actions/workflows/ci.yml"><img src="https://github.com/muhammad-fiaz/json-c/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-		<a href="https://github.com/muhammad-fiaz/json-c/actions/workflows/deploy.yml"><img src="https://github.com/muhammad-fiaz/json-c/actions/workflows/deploy.yml/badge.svg" alt="Docs Deploy"></a>
-		<a href="https://github.com/muhammad-fiaz/json-c"><img src="https://img.shields.io/github/stars/muhammad-fiaz/json-c" alt="GitHub stars"></a>
-		<a href="https://github.com/muhammad-fiaz/json-c/issues"><img src="https://img.shields.io/github/issues/muhammad-fiaz/json-c" alt="GitHub issues"></a>
-		<a href="https://github.com/muhammad-fiaz/json-c/pulls"><img src="https://img.shields.io/github/issues-pr/muhammad-fiaz/json-c" alt="GitHub pull requests"></a>
-		<a href="https://github.com/muhammad-fiaz/json-c"><img src="https://img.shields.io/github/last-commit/muhammad-fiaz/json-c" alt="GitHub last commit"></a>
-		<a href="https://github.com/muhammad-fiaz/json-c/blob/main/LICENSE"><img src="https://img.shields.io/github/license/muhammad-fiaz/json-c" alt="License"></a>
-		<img src="https://img.shields.io/badge/platforms-linux%20%7C%20windows%20%7C%20macos-blue" alt="Supported Platforms">
-		<a href="https://pay.muhammadfiaz.com"><img src="https://img.shields.io/badge/Sponsor-pay.muhammadfiaz.com-ff69b4?style=flat&logo=heart" alt="Sponsor"></a>
-	</p>
 
-	<p><em>A lightweight, modular, dependency-free JSON library for ISO C.</em></p>
+[![Documentation](https://img.shields.io/badge/docs-muhammad--fiaz.github.io-blue)](https://muhammad-fiaz.github.io/json-c/)
+[![CI](https://github.com/muhammad-fiaz/json-c/actions/workflows/ci.yml/badge.svg)](https://github.com/muhammad-fiaz/json-c/actions/workflows/ci.yml)
+[![Docs Deploy](https://github.com/muhammad-fiaz/json-c/actions/workflows/deploy.yml/badge.svg)](https://github.com/muhammad-fiaz/json-c/actions/workflows/deploy.yml)
+[![License](https://img.shields.io/github/license/muhammad-fiaz/json-c)](LICENSE)
+[![Platforms](https://img.shields.io/badge/platforms-linux%20%7C%20windows%20%7C%20macos-blue)]()
 
-	<p>
-		<b><a href="https://muhammad-fiaz.github.io/json-c/">Documentation</a> |
-		<a href="https://muhammad-fiaz.github.io/json-c/api/parser">API Reference</a> |
-		<a href="https://muhammad-fiaz.github.io/json-c/guide/getting-started">Quick Start</a> |
-		<a href="CONTRIBUTING.md">Contributing</a></b>
-	</p>
+**A lightweight, modular, dependency-free JSON library for ISO C.**
+
+[Documentation](https://muhammad-fiaz.github.io/json-c/) · [API Reference](https://muhammad-fiaz.github.io/json-c/api/) · [Quick Start](https://muhammad-fiaz.github.io/json-c/guide/getting-started) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
+
 </div>
 
-`json-c` is a modern C JSON library with a small public surface, predictable allocation behavior, and a focus on portability. The codebase is being developed as a modular foundation for parsing, DOM editing, serialization, validation, and future streaming integrations.
+json-c is a lightweight, super fast, modular, dependency-free JSON library for C/C++. It has a small public surface, predictable allocation behavior, and a focus on portability. The codebase is being developed as a modular foundation for parsing, DOM editing, serialization, validation, and future streaming integrations.
 
 > [!TIP]
 > If you use json-c in a project, consider starring the repository and reading the documentation before wiring it into production code.
@@ -30,10 +20,11 @@
 > [!NOTE]
 > **Project status:** this repository is actively evolving. The initial goal is a clean, well-documented, and production-focused C foundation rather than a copy of any existing JSON library.
 
-## Links
+## Project Links
 
 - Website: [muhammadfiaz.com](https://muhammadfiaz.com)
 - GitHub: [muhammad-fiaz](https://github.com/muhammad-fiaz)
+- Documentation: [muhammad-fiaz.github.io/json-c](https://muhammad-fiaz.github.io/json-c/)
 - LinkedIn: [Muhammad Fiaz](https://www.linkedin.com/in/muhammad-fiaz-)
 - X: [@muhammadfiaz_](https://x.com/muhammadfiaz_)
 
@@ -83,6 +74,11 @@ int main(void) {
 - [Architecture](https://muhammad-fiaz.github.io/json-c/guide/architecture)
 - [Validation](https://muhammad-fiaz.github.io/json-c/guide/validation)
 - [FAQ](https://muhammad-fiaz.github.io/json-c/guide/faq)
+
+## Repository Policies
+
+- [Contributing](CONTRIBUTING.md)
+- [Security](SECURITY.md)
 
 ## License
 
