@@ -251,7 +251,6 @@ gtag('config', '${GA_ID}');`,
         items: [
           { text: "Contributing", link: "/guide/contributing" },
           { text: "FAQ", link: "/guide/faq" },
-          { text: "Security", link: "/guide/security" },
           { text: "Code of Conduct", link: "/guide/code-of-conduct" },
         ],
       },

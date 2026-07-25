@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Documentation
+    url: https://muhammad-fiaz.github.io/json-c/
+    about: Read the json-c documentation and API reference before opening an issue.
   - name: Security reporting
     url: https://github.com/muhammad-fiaz/json-c/security/advisories/new
     about: Report sensitive security issues privately.

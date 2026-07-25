@@ -15,10 +15,7 @@
 json-c is a lightweight, super fast, modular, dependency-free JSON library for C/C++. It has a small public surface, predictable allocation behavior, and a focus on portability. The codebase is being developed as a modular foundation for parsing, DOM editing, serialization, validation, and future streaming integrations.
 
 > [!TIP]
-> If you use json-c in a project, consider starring the repository and reading the documentation before wiring it into production code.
-
-> [!NOTE]
-> **Project status:** this repository is actively evolving. The initial goal is a clean, well-documented, and production-focused C foundation rather than a copy of any existing JSON library.
+> If you like json-c, please star the repository. Contributions are welcome, and if you find any issues, errors, or bugs, feel free to report them here.
 
 ## Highlights
 
