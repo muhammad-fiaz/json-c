@@ -1,3 +1,4 @@
+---
 title: Introduction
 description: Overview of json-c, its goals, and its architecture.
 ---
