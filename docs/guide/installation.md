@@ -7,13 +7,20 @@ description: Build and package json-c with CMake, pkg-config, and common package
 
 json-c is designed to be easy to consume from source trees, package managers, and superbuilds.
 
+## Prerequisites
+
+You need a C and C++ toolchain, CMake, and a build backend such as Ninja or Make.
+Pkg-config is optional, but useful when integrating into larger systems.
+
 ## Build from source
 
 ```bash
-cmake -S . -B build -DJSONC_BUILD_TESTS=ON
+cmake -S . -B build -DJSONC_BUILD_TESTS=ON -DJSONC_BUILD_EXAMPLES=ON
 cmake --build build
 cmake --install build
 ```
+
+If you are building from a fresh clone, run the commands from the repository root.
 
 ## CMake integration
 
@@ -30,9 +37,9 @@ pkg-config --cflags --libs json-c
 
 ## Package managers
 
-- vcpkg: manifest support via `vcpkg.json`
-- Conan: recipe support via `conanfile.py`
-- xmake: build and package support via `xmake.lua`
+- vcpkg: manifest support via [vcpkg.json](https://github.com/muhammad-fiaz/json-c/blob/main/vcpkg.json)
+- Conan: recipe support via [conanfile.py](https://github.com/muhammad-fiaz/json-c/blob/main/conanfile.py)
+- xmake: build and package support via [xmake.lua](https://github.com/muhammad-fiaz/json-c/blob/main/xmake.lua)
 
 ## Language support
 

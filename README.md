@@ -37,6 +37,13 @@ cmake --build build
 ctest --test-dir build --output-on-failure
 ```
 
+## Installation
+
+The full installation guide lives in the docs site and covers source builds, CMake integration, pkg-config, and package-manager usage.
+
+- [Installation Guide](https://muhammad-fiaz.github.io/json-c/guide/installation)
+- [Getting Started](https://muhammad-fiaz.github.io/json-c/guide/getting-started)
+
 ## Quick Example
 
 ```c
@@ -79,9 +86,9 @@ json-c is intended to build cleanly with mainstream C and C++ toolchains, includ
 
 ## Package Managers
 
-- Conan: `conanfile.py`
-- vcpkg: `vcpkg.json`
-- xmake: `xmake.lua`
+- Conan: [conanfile.py](https://github.com/muhammad-fiaz/json-c/blob/main/conanfile.py)
+- vcpkg: [vcpkg.json](https://github.com/muhammad-fiaz/json-c/blob/main/vcpkg.json)
+- xmake: [xmake.lua](https://github.com/muhammad-fiaz/json-c/blob/main/xmake.lua)
 
 ## License
 
