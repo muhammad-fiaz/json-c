@@ -83,6 +83,79 @@ jsonc_value *jsonc_parse_string(const char *text, jsonc_error *error);
 char *jsonc_stringify(const jsonc_value *value, jsonc_format format, const jsonc_allocator *allocator);
 
 /**
+ * Parse JSON Lines text into an array of JSON values.
+ *
+ * @param text UTF-8 encoded JSON Lines document.
+ * @param error Optional error output.
+ * @return Newly allocated array value on success, or NULL on failure.
+ */
+jsonc_value *jsonc_parse_jsonl_string(const char *text, jsonc_error *error);
+
+/**
+ * Parse a JSON document from a file path.
+ *
+ * @param path UTF-8 file path.
+ * @param error Optional error output.
+ * @return Newly allocated value on success, or NULL on failure.
+ */
+jsonc_value *jsonc_parse_file(const char *path, jsonc_error *error);
+
+/**
+ * Parse a JSON Lines document from a file path.
+ *
+ * @param path UTF-8 file path.
+ * @param error Optional error output.
+ * @return Newly allocated array value on success, or NULL on failure.
+ */
+jsonc_value *jsonc_parse_jsonl_file(const char *path, jsonc_error *error);
+
+/**
+ * Write a JSON value to a file path.
+ *
+ * @param path UTF-8 file path.
+ * @param value JSON value to write.
+ * @param format Compact or pretty output.
+ * @param error Optional error output.
+ * @return 0 on success, non-zero on failure.
+ */
+int jsonc_write_file(const char *path, const jsonc_value *value, jsonc_format format, jsonc_error *error);
+
+/**
+ * Return the number of elements in an array value.
+ *
+ * @param value Array node.
+ * @return Element count, or 0 for NULL or non-array input.
+ */
+size_t jsonc_array_size(const jsonc_value *value);
+
+/**
+ * Return an array element by index.
+ *
+ * @param value Array node.
+ * @param index Zero-based element index.
+ * @return Borrowed element pointer, or NULL when out of range.
+ */
+jsonc_value *jsonc_array_get(const jsonc_value *value, size_t index);
+
+/**
+ * Append a JSON value to an array.
+ *
+ * @param value Array node.
+ * @param item Owned value to append.
+ * @return 0 on success, non-zero on failure.
+ */
+int jsonc_array_append_value(jsonc_value *value, jsonc_value *item);
+
+/**
+ * Remove an array element by index.
+ *
+ * @param value Array node.
+ * @param index Zero-based element index.
+ * @return 0 on success, non-zero on failure.
+ */
+int jsonc_array_remove(jsonc_value *value, size_t index);
+
+/**
  * Free a string returned by jsonc_stringify.
  *
  * @param text String to release.
@@ -123,6 +196,22 @@ int jsonc_value_get_bool(const jsonc_value *value);
 int jsonc_value_set_bool(jsonc_value *value, int boolean_value);
 
 /**
+ * Return an integer value.
+ *
+ * @param value Integer node.
+ * @return Integer payload, or 0 for NULL or non-integer input.
+ */
+long jsonc_value_get_integer(const jsonc_value *value);
+
+/**
+ * Return a number value.
+ *
+ * @param value Number node.
+ * @return Floating-point payload, or 0.0 for NULL or non-number input.
+ */
+double jsonc_value_get_number(const jsonc_value *value);
+
+/**
  * Return a string value.
  *
  * @param value String node.
@@ -150,6 +239,54 @@ jsonc_value *jsonc_object_get(const jsonc_value *value, const char *key);
 int jsonc_object_set_bool(jsonc_value *value, const char *key, int boolean_value);
 
 /**
+ * Add or replace a null member on an object.
+ *
+ * @param value Object node.
+ * @param key Member name.
+ * @return 0 on success, non-zero on failure.
+ */
+int jsonc_object_set_null(jsonc_value *value, const char *key);
+
+/**
+ * Add or replace a string member on an object.
+ *
+ * @param value Object node.
+ * @param key Member name.
+ * @param text UTF-8 string payload.
+ * @return 0 on success, non-zero on failure.
+ */
+int jsonc_object_set_string(jsonc_value *value, const char *key, const char *text);
+
+/**
+ * Add or replace an integer member on an object.
+ *
+ * @param value Object node.
+ * @param key Member name.
+ * @param integer_value Integer payload.
+ * @return 0 on success, non-zero on failure.
+ */
+int jsonc_object_set_integer(jsonc_value *value, const char *key, long integer_value);
+
+/**
+ * Add or replace a number member on an object.
+ *
+ * @param value Object node.
+ * @param key Member name.
+ * @param number_value Floating-point payload.
+ * @return 0 on success, non-zero on failure.
+ */
+int jsonc_object_set_number(jsonc_value *value, const char *key, double number_value);
+
+/**
+ * Remove a member from an object.
+ *
+ * @param value Object node.
+ * @param key Member name.
+ * @return 0 on success, non-zero on failure.
+ */
+int jsonc_object_remove(jsonc_value *value, const char *key);
+
+/**
  * Create a null value.
  *
  * @return Newly allocated null value or NULL.
@@ -163,6 +300,36 @@ jsonc_value *jsonc_value_new_null(void);
  * @return Newly allocated boolean value or NULL.
  */
 jsonc_value *jsonc_value_new_bool(int boolean_value);
+
+/**
+ * Create an integer value.
+ *
+ * @param integer_value Integer payload.
+ * @return Newly allocated integer value or NULL.
+ */
+jsonc_value *jsonc_value_new_integer(long integer_value);
+
+/**
+ * Create a number value.
+ *
+ * @param number_value Floating-point payload.
+ * @return Newly allocated number value or NULL.
+ */
+jsonc_value *jsonc_value_new_number(double number_value);
+
+/**
+ * Create an array value.
+ *
+ * @return Newly allocated array value or NULL.
+ */
+jsonc_value *jsonc_value_new_array(void);
+
+/**
+ * Create an object value.
+ *
+ * @return Newly allocated object value or NULL.
+ */
+jsonc_value *jsonc_value_new_object(void);
 
 /**
  * Create a string value.

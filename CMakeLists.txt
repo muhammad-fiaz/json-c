@@ -60,6 +60,14 @@ if(JSONC_BUILD_EXAMPLES)
     add_executable(jsonc_basic examples/basic.c)
     target_link_libraries(jsonc_basic PRIVATE jsonc::jsonc)
     target_include_directories(jsonc_basic PRIVATE ${JSONC_PUBLIC_INCLUDE_DIR})
+
+    add_executable(jsonc_jsonl examples/jsonl.c)
+    target_link_libraries(jsonc_jsonl PRIVATE jsonc::jsonc)
+    target_include_directories(jsonc_jsonl PRIVATE ${JSONC_PUBLIC_INCLUDE_DIR})
+
+    add_executable(jsonc_fileops examples/fileops.c)
+    target_link_libraries(jsonc_fileops PRIVATE jsonc::jsonc)
+    target_include_directories(jsonc_fileops PRIVATE ${JSONC_PUBLIC_INCLUDE_DIR})
 endif()
 
 if(JSONC_ENABLE_INSTALL)

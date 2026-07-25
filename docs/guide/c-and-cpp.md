@@ -18,9 +18,9 @@ json-c is written in ISO C and exposes a plain C API that can be used directly f
 
 ## What is exported today
 
-json-c currently exports a focused set of operations for parsing, serialization, value lifecycle management, boolean mutation, string inspection, and object lookup. See the [Operations guide](./operations) for the current function matrix.
+json-c exports a focused set of operations for parsing, serialization, value lifecycle management, scalar inspection, array access, object lookup, and object mutation. See the [Operations guide](./operations) for the current function matrix.
 
-Arrays and object mutation are represented in the DOM, but the exported helper set is intentionally small today.
+Arrays and objects are first-class DOM nodes, and the public helper set now covers the common edit and inspection paths.
 
 ## C usage
 
@@ -96,7 +96,8 @@ Common object operations include:
 
 - parse a document
 - retrieve a member by name
-- set or replace a boolean member
+- set or replace boolean, integer, number, string, or null members
+- read array length and item pointers
 - serialize the result back to text
 - destroy the full tree when finished
 
@@ -116,6 +117,18 @@ if (name != NULL) {
 
 ```c
 jsonc_object_set_bool(value, "enabled", 1);
+```
+
+### Read numbers
+
+```c
+jsonc_value *count = jsonc_object_get(value, "count");
+if (count != NULL) {
+    long integer_value = jsonc_value_get_integer(count);
+    double number_value = jsonc_value_get_number(count);
+    (void)integer_value;
+    (void)number_value;
+}
 ```
 
 ### Read and modify a string

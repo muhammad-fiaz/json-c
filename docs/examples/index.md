@@ -40,3 +40,11 @@ int main(void) {
 ## Example style
 
 Examples should stay small, self-contained, and ready to copy into a C or C++ project with minimal adjustment.
+
+## JSONL example
+
+The repository also includes [examples/jsonl.c](../../examples/jsonl.c), which demonstrates parsing newline-delimited JSON into an array value.
+
+## File operations example
+
+[examples/fileops.c](../../examples/fileops.c) shows the file-path helpers for loading and writing JSON documents.

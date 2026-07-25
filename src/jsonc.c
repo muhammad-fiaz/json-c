@@ -129,7 +129,7 @@ jsonc_value *jsonc_value_new_string(const char *text) {
     return value;
 }
 
-static jsonc_value *jsonc_value_new_integer(long integer_value) {
+jsonc_value *jsonc_value_new_integer(long integer_value) {
     jsonc_value *value;
     value = jsonc_new_value(JSONC_TYPE_INTEGER);
     if (value == NULL) {
@@ -139,7 +139,7 @@ static jsonc_value *jsonc_value_new_integer(long integer_value) {
     return value;
 }
 
-static jsonc_value *jsonc_value_new_number(double number_value) {
+jsonc_value *jsonc_value_new_number(double number_value) {
     jsonc_value *value;
     value = jsonc_new_value(JSONC_TYPE_NUMBER);
     if (value == NULL) {
@@ -149,12 +149,65 @@ static jsonc_value *jsonc_value_new_number(double number_value) {
     return value;
 }
 
-static jsonc_value *jsonc_value_new_array(void) {
+jsonc_value *jsonc_value_new_array(void) {
     return jsonc_new_value(JSONC_TYPE_ARRAY);
 }
 
-static jsonc_value *jsonc_value_new_object(void) {
+jsonc_value *jsonc_value_new_object(void) {
     return jsonc_new_value(JSONC_TYPE_OBJECT);
+}
+int jsonc_object_remove(jsonc_value *value, const char *key);
+
+size_t jsonc_array_size(const jsonc_value *value) {
+    if (value == NULL || value->type != JSONC_TYPE_ARRAY) {
+        return 0;
+    }
+    return value->as.array.size;
+}
+
+jsonc_value *jsonc_array_get(const jsonc_value *value, size_t index) {
+    if (value == NULL || value->type != JSONC_TYPE_ARRAY || index >= value->as.array.size) {
+        return NULL;
+    }
+    return value->as.array.items[index];
+}
+
+int jsonc_array_append_value(jsonc_value *value, jsonc_value *item) {
+    jsonc_value **grown;
+    size_t new_capacity;
+
+    if (value == NULL || value->type != JSONC_TYPE_ARRAY || item == NULL) {
+        return -1;
+    }
+
+    if (value->as.array.size + 1 > value->as.array.capacity) {
+        new_capacity = value->as.array.capacity == 0 ? 4 : value->as.array.capacity * 2;
+        grown = (jsonc_value **)realloc(value->as.array.items, new_capacity * sizeof(jsonc_value *));
+        if (grown == NULL) {
+            return -1;
+        }
+        value->as.array.items = grown;
+        value->as.array.capacity = new_capacity;
+    }
+
+    value->as.array.items[value->as.array.size] = item;
+    value->as.array.size += 1;
+    return 0;
+}
+
+int jsonc_array_remove(jsonc_value *value, size_t index) {
+    size_t i;
+
+    if (value == NULL || value->type != JSONC_TYPE_ARRAY || index >= value->as.array.size) {
+        return -1;
+    }
+
+    jsonc_value_destroy(value->as.array.items[index]);
+    for (i = index + 1; i < value->as.array.size; ++i) {
+        value->as.array.items[i - 1] = value->as.array.items[i];
+    }
+    value->as.array.size -= 1;
+    return 0;
 }
 
 jsonc_type jsonc_value_type(const jsonc_value *value) {
@@ -177,6 +230,20 @@ int jsonc_value_set_bool(jsonc_value *value, int boolean_value) {
     }
     value->as.boolean_value = boolean_value ? 1 : 0;
     return 0;
+}
+
+long jsonc_value_get_integer(const jsonc_value *value) {
+    if (value == NULL || value->type != JSONC_TYPE_INTEGER) {
+        return 0;
+    }
+    return value->as.integer_value;
+}
+
+double jsonc_value_get_number(const jsonc_value *value) {
+    if (value == NULL || value->type != JSONC_TYPE_NUMBER) {
+        return 0.0;
+    }
+    return value->as.number_value;
 }
 
 const char *jsonc_value_get_string(const jsonc_value *value) {
@@ -680,8 +747,8 @@ static jsonc_value *jsonc_parse_object_value(jsonc_parser *parser) {
     while (1) {
         jsonc_value *key_value;
         jsonc_value *member_value;
-        const char *key;
         size_t key_length;
+        const char *key;
         char segment[128];
         size_t i;
 
@@ -849,6 +916,142 @@ jsonc_value *jsonc_parse_string(const char *text, jsonc_error *error) {
     return value;
 }
 
+jsonc_value *jsonc_parse_jsonl_string(const char *text, jsonc_error *error) {
+    const char *cursor;
+    size_t line_number;
+    jsonc_value *lines;
+
+    if (text == NULL) {
+        if (error != NULL) {
+            error->code = JSONC_ERROR_INVALID_SYNTAX;
+            strncpy(error->message, "Input text is NULL", sizeof(error->message) - 1);
+            error->message[sizeof(error->message) - 1] = '\0';
+            error->line = 1;
+            error->column = 1;
+            error->byte_offset = 0;
+            error->path[0] = '$';
+            error->path[1] = '\0';
+        }
+        return NULL;
+    }
+
+    lines = jsonc_value_new_array();
+    if (lines == NULL) {
+        if (error != NULL) {
+            error->code = JSONC_ERROR_NO_MEMORY;
+            strncpy(error->message, "Out of memory", sizeof(error->message) - 1);
+            error->message[sizeof(error->message) - 1] = '\0';
+            error->line = 1;
+            error->column = 1;
+            error->byte_offset = 0;
+            error->path[0] = '$';
+            error->path[1] = '\0';
+        }
+        return NULL;
+    }
+
+    cursor = text;
+    line_number = 1;
+    while (*cursor != '\0') {
+        const char *line_start;
+        const char *line_end;
+        const char *trimmed_start;
+        const char *trimmed_end;
+        size_t length;
+        char *line_text;
+        jsonc_error line_error;
+        jsonc_value *item;
+
+        line_start = cursor;
+        line_end = cursor;
+        while (*line_end != '\0' && *line_end != '\n' && *line_end != '\r') {
+            line_end += 1;
+        }
+
+        trimmed_start = line_start;
+        trimmed_end = line_end;
+        while (trimmed_start < trimmed_end && isspace((unsigned char)*trimmed_start)) {
+            trimmed_start += 1;
+        }
+        while (trimmed_end > trimmed_start && isspace((unsigned char)*(trimmed_end - 1))) {
+            trimmed_end -= 1;
+        }
+
+        if (trimmed_start < trimmed_end) {
+            length = (size_t)(trimmed_end - trimmed_start);
+            line_text = (char *)malloc(length + 1);
+            if (line_text == NULL) {
+                if (error != NULL) {
+                    error->code = JSONC_ERROR_NO_MEMORY;
+                    strncpy(error->message, "Out of memory", sizeof(error->message) - 1);
+                    error->message[sizeof(error->message) - 1] = '\0';
+                    error->line = line_number;
+                    error->column = 1;
+                    error->byte_offset = (size_t)(line_start - text);
+                    error->path[0] = '$';
+                    error->path[1] = '\0';
+                }
+                jsonc_value_destroy(lines);
+                return NULL;
+            }
+            memcpy(line_text, trimmed_start, length);
+            line_text[length] = '\0';
+
+            item = jsonc_parse_string(line_text, &line_error);
+            free(line_text);
+            if (item == NULL) {
+                if (error != NULL) {
+                    *error = line_error;
+                    error->line += line_number - 1;
+                    error->byte_offset += (size_t)(line_start - text);
+                }
+                jsonc_value_destroy(lines);
+                return NULL;
+            }
+
+            if (lines->as.array.size + 1 > lines->as.array.capacity) {
+                size_t new_capacity;
+                jsonc_value **grown;
+
+                new_capacity = lines->as.array.capacity == 0 ? 4 : lines->as.array.capacity * 2;
+                grown = (jsonc_value **)realloc(lines->as.array.items, new_capacity * sizeof(jsonc_value *));
+                if (grown == NULL) {
+                    jsonc_value_destroy(item);
+                    if (error != NULL) {
+                        error->code = JSONC_ERROR_NO_MEMORY;
+                        strncpy(error->message, "Out of memory", sizeof(error->message) - 1);
+                        error->message[sizeof(error->message) - 1] = '\0';
+                        error->line = line_number;
+                        error->column = 1;
+                        error->byte_offset = (size_t)(line_start - text);
+                        error->path[0] = '$';
+                        error->path[1] = '\0';
+                    }
+                    jsonc_value_destroy(lines);
+                    return NULL;
+                }
+                lines->as.array.items = grown;
+                lines->as.array.capacity = new_capacity;
+            }
+            lines->as.array.items[lines->as.array.size] = item;
+            lines->as.array.size += 1;
+        }
+
+        cursor = line_end;
+        if (*cursor == '\r') {
+            cursor += 1;
+            if (*cursor == '\n') {
+                cursor += 1;
+            }
+        } else if (*cursor == '\n') {
+            cursor += 1;
+        }
+        line_number += 1;
+    }
+
+    return lines;
+}
+
 jsonc_value *jsonc_object_get(const jsonc_value *value, const char *key) {
     size_t i;
     if (value == NULL || value->type != JSONC_TYPE_OBJECT || key == NULL) {
@@ -862,24 +1065,28 @@ jsonc_value *jsonc_object_get(const jsonc_value *value, const char *key) {
     return NULL;
 }
 
-int jsonc_object_set_bool(jsonc_value *value, const char *key, int boolean_value) {
-    jsonc_value *existing;
-    jsonc_value *new_value;
+static int jsonc_object_store_value(jsonc_value *object, const char *key, jsonc_value *new_value) {
+    long index;
     size_t key_length;
     char *key_copy;
     jsonc_pair *grown;
     size_t new_capacity;
 
-    if (value == NULL || value->type != JSONC_TYPE_OBJECT || key == NULL) {
+    if (object == NULL || object->type != JSONC_TYPE_OBJECT || key == NULL || new_value == NULL) {
         return -1;
     }
 
-    existing = jsonc_object_get(value, key);
-    if (existing != NULL) {
-        if (existing->type != JSONC_TYPE_BOOLEAN) {
-            return -1;
+    index = -1;
+    for (size_t i = 0; i < object->as.object.size; ++i) {
+        if (strcmp(object->as.object.items[i].key, key) == 0) {
+            index = (long)i;
+            break;
         }
-        existing->as.boolean_value = boolean_value ? 1 : 0;
+    }
+
+    if (index >= 0) {
+        jsonc_value_destroy(object->as.object.items[index].value);
+        object->as.object.items[index].value = new_value;
         return 0;
     }
 
@@ -890,27 +1097,333 @@ int jsonc_object_set_bool(jsonc_value *value, const char *key, int boolean_value
     }
     memcpy(key_copy, key, key_length + 1);
 
-    new_value = jsonc_value_new_bool(boolean_value);
-    if (new_value == NULL) {
-        free(key_copy);
+    if (object->as.object.size + 1 > object->as.object.capacity) {
+        new_capacity = object->as.object.capacity == 0 ? 4 : object->as.object.capacity * 2;
+        grown = (jsonc_pair *)realloc(object->as.object.items, new_capacity * sizeof(jsonc_pair));
+        if (grown == NULL) {
+            free(key_copy);
+            return -1;
+        }
+        object->as.object.items = grown;
+        object->as.object.capacity = new_capacity;
+    }
+
+    object->as.object.items[object->as.object.size].key = key_copy;
+    object->as.object.items[object->as.object.size].value = new_value;
+    object->as.object.size += 1;
+    return 0;
+}
+
+int jsonc_object_set_bool(jsonc_value *value, const char *key, int boolean_value) {
+    jsonc_value *new_value;
+
+    if (value == NULL || value->type != JSONC_TYPE_OBJECT || key == NULL) {
         return -1;
     }
 
-    if (value->as.object.size + 1 > value->as.object.capacity) {
-        new_capacity = value->as.object.capacity == 0 ? 4 : value->as.object.capacity * 2;
-        grown = (jsonc_pair *)realloc(value->as.object.items, new_capacity * sizeof(jsonc_pair));
-        if (grown == NULL) {
-            free(key_copy);
-            jsonc_value_destroy(new_value);
-            return -1;
-        }
-        value->as.object.items = grown;
-        value->as.object.capacity = new_capacity;
+    new_value = jsonc_value_new_bool(boolean_value);
+    if (new_value == NULL) {
+        return -1;
+    }
+    if (jsonc_object_store_value(value, key, new_value) != 0) {
+        jsonc_value_destroy(new_value);
+        return -1;
+    }
+    return 0;
+}
+
+int jsonc_object_set_null(jsonc_value *value, const char *key) {
+    jsonc_value *new_value;
+
+    if (value == NULL || value->type != JSONC_TYPE_OBJECT || key == NULL) {
+        return -1;
     }
 
-    value->as.object.items[value->as.object.size].key = key_copy;
-    value->as.object.items[value->as.object.size].value = new_value;
-    value->as.object.size += 1;
+    new_value = jsonc_value_new_null();
+    if (new_value == NULL) {
+        return -1;
+    }
+    if (jsonc_object_store_value(value, key, new_value) != 0) {
+        jsonc_value_destroy(new_value);
+        return -1;
+    }
+    return 0;
+}
+
+int jsonc_object_set_string(jsonc_value *value, const char *key, const char *text) {
+    jsonc_value *new_value;
+
+    if (value == NULL || value->type != JSONC_TYPE_OBJECT || key == NULL || text == NULL) {
+        return -1;
+    }
+
+    new_value = jsonc_value_new_string(text);
+    if (new_value == NULL) {
+        return -1;
+    }
+    if (jsonc_object_store_value(value, key, new_value) != 0) {
+        jsonc_value_destroy(new_value);
+        return -1;
+    }
+    return 0;
+}
+
+int jsonc_object_set_integer(jsonc_value *value, const char *key, long integer_value) {
+    jsonc_value *new_value;
+
+    if (value == NULL || value->type != JSONC_TYPE_OBJECT || key == NULL) {
+        return -1;
+    }
+
+    new_value = jsonc_value_new_integer(integer_value);
+    if (new_value == NULL) {
+        return -1;
+    }
+    if (jsonc_object_store_value(value, key, new_value) != 0) {
+        jsonc_value_destroy(new_value);
+        return -1;
+    }
+    return 0;
+}
+
+int jsonc_object_set_number(jsonc_value *value, const char *key, double number_value) {
+    jsonc_value *new_value;
+
+    if (value == NULL || value->type != JSONC_TYPE_OBJECT || key == NULL) {
+        return -1;
+    }
+
+    new_value = jsonc_value_new_number(number_value);
+    if (new_value == NULL) {
+        return -1;
+    }
+    if (jsonc_object_store_value(value, key, new_value) != 0) {
+        jsonc_value_destroy(new_value);
+        return -1;
+    }
+    return 0;
+}
+
+int jsonc_object_remove(jsonc_value *value, const char *key) {
+    size_t i;
+    size_t j;
+
+    if (value == NULL || value->type != JSONC_TYPE_OBJECT || key == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < value->as.object.size; ++i) {
+        if (strcmp(value->as.object.items[i].key, key) == 0) {
+            free(value->as.object.items[i].key);
+            jsonc_value_destroy(value->as.object.items[i].value);
+            for (j = i + 1; j < value->as.object.size; ++j) {
+                value->as.object.items[j - 1] = value->as.object.items[j];
+            }
+            value->as.object.size -= 1;
+            return 0;
+        }
+    }
+
+    return -1;
+}
+
+static int jsonc_read_entire_file(const char *path, char **text_out, jsonc_error *error) {
+    FILE *file;
+    long length;
+    char *buffer;
+    size_t read_length;
+
+    if (path == NULL || text_out == NULL) {
+        if (error != NULL) {
+            error->code = JSONC_ERROR_INVALID_SYNTAX;
+            strncpy(error->message, "Path or output pointer is NULL", sizeof(error->message) - 1);
+            error->message[sizeof(error->message) - 1] = '\0';
+            error->line = 1;
+            error->column = 1;
+            error->byte_offset = 0;
+            error->path[0] = '$';
+            error->path[1] = '\0';
+        }
+        return -1;
+    }
+
+    file = fopen(path, "rb");
+    if (file == NULL) {
+        if (error != NULL) {
+            error->code = JSONC_ERROR_NOT_FOUND;
+            strncpy(error->message, "Failed to open file", sizeof(error->message) - 1);
+            error->message[sizeof(error->message) - 1] = '\0';
+            error->line = 1;
+            error->column = 1;
+            error->byte_offset = 0;
+            error->path[0] = '$';
+            error->path[1] = '\0';
+        }
+        return -1;
+    }
+
+    if (fseek(file, 0, SEEK_END) != 0) {
+        fclose(file);
+        if (error != NULL) {
+            error->code = JSONC_ERROR_INVALID_SYNTAX;
+            strncpy(error->message, "Failed to seek file", sizeof(error->message) - 1);
+            error->message[sizeof(error->message) - 1] = '\0';
+            error->line = 1;
+            error->column = 1;
+            error->byte_offset = 0;
+            error->path[0] = '$';
+            error->path[1] = '\0';
+        }
+        return -1;
+    }
+
+    length = ftell(file);
+    if (length < 0 || fseek(file, 0, SEEK_SET) != 0) {
+        fclose(file);
+        if (error != NULL) {
+            error->code = JSONC_ERROR_INVALID_SYNTAX;
+            strncpy(error->message, "Failed to measure file", sizeof(error->message) - 1);
+            error->message[sizeof(error->message) - 1] = '\0';
+            error->line = 1;
+            error->column = 1;
+            error->byte_offset = 0;
+            error->path[0] = '$';
+            error->path[1] = '\0';
+        }
+        return -1;
+    }
+
+    buffer = (char *)malloc((size_t)length + 1);
+    if (buffer == NULL) {
+        fclose(file);
+        if (error != NULL) {
+            error->code = JSONC_ERROR_NO_MEMORY;
+            strncpy(error->message, "Out of memory", sizeof(error->message) - 1);
+            error->message[sizeof(error->message) - 1] = '\0';
+            error->line = 1;
+            error->column = 1;
+            error->byte_offset = 0;
+            error->path[0] = '$';
+            error->path[1] = '\0';
+        }
+        return -1;
+    }
+
+    read_length = fread(buffer, 1, (size_t)length, file);
+    fclose(file);
+    if (read_length != (size_t)length) {
+        free(buffer);
+        if (error != NULL) {
+            error->code = JSONC_ERROR_INVALID_SYNTAX;
+            strncpy(error->message, "Failed to read file", sizeof(error->message) - 1);
+            error->message[sizeof(error->message) - 1] = '\0';
+            error->line = 1;
+            error->column = 1;
+            error->byte_offset = 0;
+            error->path[0] = '$';
+            error->path[1] = '\0';
+        }
+        return -1;
+    }
+
+    buffer[length] = '\0';
+    *text_out = buffer;
+    return 0;
+}
+
+jsonc_value *jsonc_parse_file(const char *path, jsonc_error *error) {
+    char *text;
+    jsonc_value *value;
+
+    if (jsonc_read_entire_file(path, &text, error) != 0) {
+        return NULL;
+    }
+
+    value = jsonc_parse_string(text, error);
+    free(text);
+    return value;
+}
+
+jsonc_value *jsonc_parse_jsonl_file(const char *path, jsonc_error *error) {
+    char *text;
+    jsonc_value *value;
+
+    if (jsonc_read_entire_file(path, &text, error) != 0) {
+        return NULL;
+    }
+
+    value = jsonc_parse_jsonl_string(text, error);
+    free(text);
+    return value;
+}
+
+int jsonc_write_file(const char *path, const jsonc_value *value, jsonc_format format, jsonc_error *error) {
+    FILE *file;
+    char *text;
+
+    if (path == NULL || value == NULL) {
+        if (error != NULL) {
+            error->code = JSONC_ERROR_INVALID_SYNTAX;
+            strncpy(error->message, "Path or value is NULL", sizeof(error->message) - 1);
+            error->message[sizeof(error->message) - 1] = '\0';
+            error->line = 1;
+            error->column = 1;
+            error->byte_offset = 0;
+            error->path[0] = '$';
+            error->path[1] = '\0';
+        }
+        return -1;
+    }
+
+    text = jsonc_stringify(value, format, NULL);
+    if (text == NULL) {
+        if (error != NULL) {
+            error->code = JSONC_ERROR_NO_MEMORY;
+            strncpy(error->message, "Failed to serialize value", sizeof(error->message) - 1);
+            error->message[sizeof(error->message) - 1] = '\0';
+            error->line = 1;
+            error->column = 1;
+            error->byte_offset = 0;
+            error->path[0] = '$';
+            error->path[1] = '\0';
+        }
+        return -1;
+    }
+
+    file = fopen(path, "wb");
+    if (file == NULL) {
+        if (error != NULL) {
+            error->code = JSONC_ERROR_NOT_FOUND;
+            strncpy(error->message, "Failed to open output file", sizeof(error->message) - 1);
+            error->message[sizeof(error->message) - 1] = '\0';
+            error->line = 1;
+            error->column = 1;
+            error->byte_offset = 0;
+            error->path[0] = '$';
+            error->path[1] = '\0';
+        }
+        jsonc_free_string(text, NULL);
+        return -1;
+    }
+
+    if (fputs(text, file) == EOF) {
+        fclose(file);
+        jsonc_free_string(text, NULL);
+        if (error != NULL) {
+            error->code = JSONC_ERROR_INVALID_SYNTAX;
+            strncpy(error->message, "Failed to write file", sizeof(error->message) - 1);
+            error->message[sizeof(error->message) - 1] = '\0';
+            error->line = 1;
+            error->column = 1;
+            error->byte_offset = 0;
+            error->path[0] = '$';
+            error->path[1] = '\0';
+        }
+        return -1;
+    }
+
+    fclose(file);
+    jsonc_free_string(text, NULL);
     return 0;
 }
 

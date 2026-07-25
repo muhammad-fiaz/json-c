@@ -22,7 +22,7 @@ features:
     details: Turn UTF-8 JSON text into a DOM tree, inspect it, change it, and serialize it back to compact or pretty output.
   - icon: 🧩
     title: Small public surface
-    details: The API currently focuses on value lifecycles, boolean updates, string inspection, object lookup, and constructors.
+    details: The API focuses on value lifecycles, scalar inspection, array access, object mutation, and constructors.
   - icon: 🛡️
     title: Clear diagnostics
     details: Parse failures report a code, message, line, column, byte offset, and JSON path when available.
@@ -40,9 +40,10 @@ features:
 ## What it supports
 
 - Parsing JSON text from memory with detailed error reporting.
-- Inspecting booleans and strings in parsed DOM trees.
-- Updating boolean members on JSON objects.
-- Creating null, boolean, and string values programmatically.
+- Inspecting booleans, integers, numbers, and strings in parsed DOM trees.
+- Updating boolean, integer, number, string, and null members on JSON objects.
+- Inspecting and mutating arrays and objects directly.
+- Creating null, boolean, integer, number, array, object, and string values programmatically.
 - Serializing values back to compact or pretty JSON text.
 - Releasing values and serialized buffers with explicit ownership rules.
 

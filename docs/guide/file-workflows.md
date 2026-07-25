@@ -5,7 +5,7 @@ description: Reading and writing JSON files around json-c using C and C++ file A
 
 # File Workflows
 
-json-c works with JSON text in memory. Your application is responsible for opening files, reading the bytes into memory, and closing the file handle after use.
+json-c can work directly from file paths with `jsonc_parse_file`, `jsonc_parse_jsonl_file`, and `jsonc_write_file`. If you prefer manual file handling, you can still read and write text yourself and then use the string-based APIs.
 
 ## Read a JSON file in C
 
@@ -77,6 +77,24 @@ if (json != NULL) {
 jsonc_value_destroy(value);
 ```
 
+## Parse and write files with helpers
+
+```c
+jsonc_error error;
+jsonc_value *value;
+
+value = jsonc_parse_file("input.json", &error);
+if (value == NULL) {
+    /* inspect error.message, error.line, error.column, error.byte_offset */
+}
+
+if (jsonc_write_file("output.json", value, JSONC_FORMAT_PRETTY, &error) != 0) {
+    /* inspect error.message */
+}
+
+jsonc_value_destroy(value);
+```
+
 ## Read a JSON file in C++
 
 ```cpp
@@ -95,4 +113,4 @@ std::string text = buffer.str();
 
 ## Close files explicitly
 
-Always close the file handle in your application once reading or writing is complete. json-c only operates on the in-memory text you provide.
+When you manage file handles yourself, always close them explicitly. json-c only operates on the in-memory text you provide.
