@@ -5,15 +5,13 @@ description: Public constants, flags, and symbolic values used by json-c.
 
 # Constants
 
-json-c keeps public constants focused on readable, stable configuration.
+json-c keeps public constants focused on a small, readable surface.
 
-## Expected constant groups
+## Current constant groups
 
-- version macros
-- error codes
+- JSON value kinds
 - serializer modes
-- parser flags
-- validation policies
+- parser and helper error codes
 
 ## Current public constants
 
@@ -35,6 +33,6 @@ json-c keeps public constants focused on readable, stable configuration.
 - `JSONC_ERROR_TYPE_MISMATCH`
 - `JSONC_ERROR_NOT_FOUND`
 
-## Stability note
+## Notes
 
-Constants that become part of the public API should remain stable once released in a 1.0 series.
+The API does not currently export version macros, parser flags, or validation-policy toggles. Some error codes are reserved for future expansion or non-parser helpers.

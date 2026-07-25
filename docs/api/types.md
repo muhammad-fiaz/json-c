@@ -9,10 +9,10 @@ This page defines the core public types exposed by json-c.
 
 ## Core handles
 
-- jsonc_value: editable JSON node handle
-- jsonc_error: parse or validation error details
-- jsonc_allocator: caller-supplied allocation callbacks
-- jsonc_format: serializer mode selection
+- `jsonc_value`: opaque editable JSON node handle
+- `jsonc_error`: parse error details
+- `jsonc_allocator`: caller-supplied allocation callbacks used by serialization APIs
+- `jsonc_format`: serializer mode selection
 
 ## Type model
 
@@ -28,7 +28,7 @@ json-c represents the standard JSON value set:
 
 ## Primitive value helpers
 
-The public header exposes helpers for common node access patterns:
+The public header exposes helpers for the current node access patterns:
 
 - `jsonc_value_get_bool` and `jsonc_value_set_bool`
 - `jsonc_value_get_string`
@@ -37,6 +37,8 @@ The public header exposes helpers for common node access patterns:
 - `jsonc_value_new_null`
 - `jsonc_value_new_bool`
 - `jsonc_value_new_string`
+
+Arrays and objects are part of the DOM model, but only the helpers above are exported today.
 
 ## Return conventions
 

@@ -20,7 +20,7 @@ Current configuration is driven by the library implementation and the validation
 
 ## Serializer configuration
 
-The serializer accepts a formatting mode and an optional allocator.
+The serializer accepts a formatting mode.
 
 ```c
 char *text = jsonc_stringify(value, JSONC_FORMAT_PRETTY, NULL);
@@ -30,18 +30,11 @@ Use compact mode when you need smaller output and pretty mode when the result is
 
 ## Allocator configuration
 
-If you need custom memory behavior, provide a `jsonc_allocator` with matching `malloc_fn` and `free_fn` callbacks.
-
-```c
-jsonc_allocator allocator;
-allocator.malloc_fn = custom_malloc;
-allocator.free_fn = custom_free;
-allocator.user_data = state;
-```
+The public API includes a `jsonc_allocator` type and allocator parameter on the serializer for future expansion, but the current implementation uses its built-in allocation path.
 
 ## Validation configuration
 
-The library reports invalid input through `jsonc_error`. Keep your validation policy strict for external input and use relaxed handling only for trusted internal data.
+The library reports invalid input through `jsonc_error`. Keep your validation policy strict for external input and use application-level schema checks when you need business rules beyond syntax.
 
 ## Best practice
 

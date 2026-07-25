@@ -11,8 +11,8 @@ Because the project is being rebuilt with a specific focus on portability, docum
 
 ## Is the API stable?
 
-The first 0.x line is still under active development. APIs will be kept conservative until a 1.0 release.
+The 0.x line is still evolving, but the public API is intentionally small and conservative. Breaking changes should be documented in release notes.
 
 ## Does it support C++?
 
-A header-only wrapper is planned in the `cpp/` directory.
+Yes. The public header can be included from C++ projects directly. If you prefer, wrap it in `extern "C"` in your integration layer.

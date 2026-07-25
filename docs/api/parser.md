@@ -5,7 +5,7 @@ description: Parsing API reference for json-c.
 
 # Parser
 
-The parser turns UTF-8 JSON text into an editable DOM tree or a streamed event sequence.
+The parser turns UTF-8 JSON text into an editable DOM tree.
 
 ## Parse from memory
 
@@ -21,7 +21,7 @@ value = jsonc_parse_string(text, &error);
 - input: UTF-8 encoded JSON text
 - output: owned `jsonc_value *` tree on success
 - error: optional `jsonc_error *` populated on failure
-- allocator: allocation behavior is controlled by the library and the caller-selected allocator in serialization paths
+- allocator: parse allocations are currently handled internally by the library
 
 ## Error details
 
@@ -47,4 +47,12 @@ The parser recognizes:
 
 ## Error handling
 
-On failure, parsing functions should return NULL and populate the supplied error object when one is provided.
+On failure, parsing functions return NULL and populate the supplied error object when one is provided.
+
+Current parser failures typically use these codes:
+
+- `JSONC_ERROR_INVALID_SYNTAX`
+- `JSONC_ERROR_UNEXPECTED_EOF`
+- `JSONC_ERROR_NO_MEMORY`
+
+The parser also tracks a JSON path while it descends into objects and arrays so diagnostics can point at the failing location.

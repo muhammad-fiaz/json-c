@@ -21,7 +21,7 @@ jsonc_value *value;
 
 value = jsonc_parse_string("{\"ok\":true}", &error);
 if (value == NULL) {
-    /* inspect error.code, error.message, error.line, error.column */
+    /* inspect error.code, error.message, error.line, error.column, error.byte_offset */
 }
 ```
 

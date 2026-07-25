@@ -1,13 +1,13 @@
 import { defineConfig } from "vitepress";
 import llmstxt from "vitepress-plugin-llms";
 
-export const SITE_URL = "https://muhammad-fiaz.github.io/json-c";
-export const SITE_NAME = "json-c";
-export const SITE_DESCRIPTION = "A lightweight, modular, dependency-free JSON library for ISO C with DOM, parser, serializer, and validation layers.";
+export const SITE_URL = "https://muhammad-fiaz.github.io/json-c/";
+export const SITE_NAME = "JSON-C";
+export const SITE_DESCRIPTION = "JSON-C is a lightweight, modular, dependency-free JSON library for C and C++ with parsing, serialization, DOM editing, mutation, and diagnostics.";
 export const GA_ID = "G-6BVYCRK57P";
 export const GTM_ID = "GTM-P4M9T8ZR";
 export const ADSENSE_CLIENT_ID = "ca-pub-2040560600290490";
-export const KEYWORDS = "json, json parser, json serializer, iso c, c library, dom, streaming parser, validation, utf-8, unicode, embedded, portable, performance";
+export const KEYWORDS = "json, json parser, json serializer, c, c++, c library, dom, validation, utf-8, unicode, embedded, portable, performance, ownership";
 
 const authorSchema = {
   "@type": "Person",
@@ -47,7 +47,7 @@ export default defineConfig({
     ["meta", { property: "og:url", content: SITE_URL }],
     ["meta", { property: "og:title", content: SITE_NAME }],
     ["meta", { property: "og:description", content: SITE_DESCRIPTION }],
-    ["meta", { property: "og:image", content: `${SITE_URL}/cover.svg` }],
+    ["meta", { property: "og:image", content: `${SITE_URL}cover.svg` }],
     ["meta", { property: "og:image:width", content: "1200" }],
     ["meta", { property: "og:image:height", content: "630" }],
     ["meta", { property: "og:image:alt", content: "json-c - Lightweight ISO C JSON library" }],
@@ -57,7 +57,7 @@ export default defineConfig({
     ["meta", { name: "twitter:url", content: SITE_URL }],
     ["meta", { name: "twitter:title", content: SITE_NAME }],
     ["meta", { name: "twitter:description", content: SITE_DESCRIPTION }],
-    ["meta", { name: "twitter:image", content: `${SITE_URL}/cover.svg` }],
+    ["meta", { name: "twitter:image", content: `${SITE_URL}cover.svg` }],
     ["meta", { name: "twitter:image:alt", content: "json-c - Lightweight ISO C JSON library" }],
     ["meta", { name: "twitter:site", content: "@muhammadfiaz_" }],
     ["meta", { name: "twitter:creator", content: "@muhammadfiaz_" }],
@@ -103,21 +103,24 @@ gtag('config', '${GA_ID}');`,
     const pageTitle = pageData.title || SITE_NAME;
     const pageDescription = pageData.description || SITE_DESCRIPTION;
     const normalizedPath = pageData.relativePath.replace(/\.md$/, "").replace(/(^|\/)index$/, "$1").replace(/\/$/, "");
-    const canonicalUrl = normalizedPath.length > 0 ? `${SITE_URL}/${normalizedPath}` : SITE_URL;
+    const canonicalUrl = normalizedPath.length > 0 ? `${SITE_URL}${normalizedPath}` : SITE_URL;
     const isHome = pageData.relativePath === "index.md";
     const lastUpdated = pageData.lastUpdated ? new Date(pageData.lastUpdated).toISOString() : new Date().toISOString();
 
     pageData.frontmatter.head ??= [];
     pageData.frontmatter.head.push(
       ["link", { rel: "canonical", href: canonicalUrl }],
-      ["meta", { property: "og:title", content: `${pageTitle} | ${SITE_NAME}` }],
-      ["meta", { property: "og:url", content: canonicalUrl }]
+      ["meta", { property: "og:title", content: pageTitle }],
+      ["meta", { property: "og:url", content: canonicalUrl }],
+      ["meta", { name: "twitter:title", content: pageTitle }],
+      ["meta", { name: "twitter:url", content: canonicalUrl }]
     );
 
     if (pageData.frontmatter.description) {
       pageData.frontmatter.head.push(
         ["meta", { property: "og:description", content: pageData.frontmatter.description }],
-        ["meta", { name: "description", content: pageData.frontmatter.description }]
+        ["meta", { name: "description", content: pageData.frontmatter.description }],
+        ["meta", { name: "twitter:description", content: pageData.frontmatter.description }]
       );
     }
 
@@ -138,7 +141,7 @@ gtag('config', '${GA_ID}');`,
       name: isHome ? SITE_NAME : pageTitle,
       description: pageDescription,
       url: canonicalUrl,
-      image: `${SITE_URL}/cover.svg`,
+      image: `${SITE_URL}cover.svg`,
       author: authorSchema,
       publisher: {
         "@type": "Organization",
@@ -146,7 +149,7 @@ gtag('config', '${GA_ID}');`,
         url: SITE_URL,
         logo: {
           "@type": "ImageObject",
-          url: `${SITE_URL}/logo.svg`,
+          url: `${SITE_URL}logo.svg`,
         },
       },
     };
@@ -190,19 +193,37 @@ gtag('config', '${GA_ID}');`,
     ];
 
     if (!isHome) {
-      const pathParts = pageData.relativePath.replace(/\.md$/, "").split("/");
-      let currentPath = SITE_URL;
+      const pathParts = pageData.relativePath.replace(/\.md$/, "").split("/").filter(Boolean);
+      const breadcrumbParts = pathParts[pathParts.length - 1] === "index" ? pathParts.slice(0, -1) : pathParts;
 
-      pathParts.forEach((part: string, index: number) => {
-        currentPath += `/${part}`;
-        const name = part.split("-").map((segment: string) => segment.charAt(0).toUpperCase() + segment.slice(1)).join(" ");
+      if (breadcrumbParts.length === 1) {
         breadcrumbs.push({
           "@type": "ListItem",
-          position: index + 2,
-          name,
-          item: index === pathParts.length - 1 ? canonicalUrl : currentPath,
+          position: 2,
+          name: pageTitle,
+          item: canonicalUrl,
         });
-      });
+      } else if (breadcrumbParts.length > 1) {
+        let currentPath = SITE_URL;
+
+        breadcrumbParts.slice(0, -1).forEach((part: string, index: number) => {
+          currentPath += `${part}/`;
+          const name = part.split("-").map((segment: string) => segment.charAt(0).toUpperCase() + segment.slice(1)).join(" ");
+          breadcrumbs.push({
+            "@type": "ListItem",
+            position: index + 2,
+            name,
+            item: currentPath,
+          });
+        });
+
+        breadcrumbs.push({
+          "@type": "ListItem",
+          position: breadcrumbParts.length + 1,
+          name: pageTitle,
+          item: canonicalUrl,
+        });
+      }
     }
 
     graph.push({

@@ -5,14 +5,14 @@ description: Supported json-c operations, return values, and ownership rules.
 
 # Operations
 
-json-c focuses on a small set of operations that are available today. Anything not listed here should be treated as application logic or a future extension.
+json-c focuses on a small set of operations that are available today. Anything not listed here should be treated as application logic.
 
 ## Supported operations
 
 | Operation | API | Input | Output | Notes |
 | --- | --- | --- | --- | --- |
 | Parse JSON text | `jsonc_parse_string` | UTF-8 text, optional error object | Owned `jsonc_value *` or `NULL` | Populates diagnostics on failure |
-| Serialize JSON | `jsonc_stringify` | Value, format, optional allocator | Owned string or `NULL` | Use `jsonc_free_string` to release |
+| Serialize JSON | `jsonc_stringify` | Value, format, optional allocator placeholder | Owned string or `NULL` | Use `jsonc_free_string` to release |
 | Destroy value tree | `jsonc_value_destroy` | Owned value | None | Frees the full subtree |
 | Inspect type | `jsonc_value_type` | Value | `jsonc_type` | Returns `JSONC_TYPE_NULL` for `NULL` input |
 | Read boolean | `jsonc_value_get_bool` | Boolean node | Integer boolean | Returns non-zero for true |

@@ -11,17 +11,17 @@ json-c is designed to stay small and predictable. The aim is not only speed, but
 
 - minimize temporary allocations
 - keep parser state compact
-- make object and array operations cache-friendly
+- make object and array growth predictable
 - avoid hidden global locks
 - make validation costs explicit
 
 ## Recommended optimization strategy
 
 1. Prefer compact output when size matters.
-2. Reuse caller-owned allocators for embedded environments.
-3. Reserve object and array capacity when sizes are known.
-4. Enable stricter validation only where needed.
-5. Benchmark on representative payloads instead of synthetic micro-input alone.
+2. Keep documents in memory only as long as needed.
+3. Reuse parsed trees when multiple reads or edits are required.
+4. Benchmark on representative payloads instead of synthetic micro-input alone.
+5. Measure both parse time and serialization time before tuning.
 
 ## Benchmark dimensions
 
@@ -30,3 +30,10 @@ json-c is designed to stay small and predictable. The aim is not only speed, but
 - object lookup latency
 - array growth behavior
 - memory consumption per parsed node
+
+## Current cost profile
+
+- object lookup is linear in the number of members
+- arrays grow dynamically as items are added internally by the parser
+- strings are copied into owned storage
+- serialization grows a buffer as needed and then returns the final text

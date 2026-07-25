@@ -1,12 +1,14 @@
 <div align="center">
 
+# JSON-C
+
 [![Documentation](https://img.shields.io/badge/docs-muhammad--fiaz.github.io-blue)](https://muhammad-fiaz.github.io/json-c/)
 [![CI](https://github.com/muhammad-fiaz/json-c/actions/workflows/ci.yml/badge.svg)](https://github.com/muhammad-fiaz/json-c/actions/workflows/ci.yml)
 [![Docs Deploy](https://github.com/muhammad-fiaz/json-c/actions/workflows/deploy.yml/badge.svg)](https://github.com/muhammad-fiaz/json-c/actions/workflows/deploy.yml)
 [![License](https://img.shields.io/github/license/muhammad-fiaz/json-c)](LICENSE)
 [![Platforms](https://img.shields.io/badge/platforms-linux%20%7C%20windows%20%7C%20macos-blue)]()
 
-**A lightweight, modular, dependency-free JSON library for ISO C.**
+**A lightweight, modular, dependency-free JSON library for C/C++.**
 
 [Documentation](https://muhammad-fiaz.github.io/json-c/) · [API Reference](https://muhammad-fiaz.github.io/json-c/api/) · [Quick Start](https://muhammad-fiaz.github.io/json-c/guide/getting-started) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
 

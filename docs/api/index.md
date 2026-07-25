@@ -5,13 +5,13 @@ description: Complete overview of the json-c public API, data model, parameters,
 
 # API Overview
 
-json-c exposes a compact, explicit C API. The library is designed around a few core concepts:
+json-c exposes a compact, explicit C API designed around a few core concepts:
 
 - parse UTF-8 JSON text into a DOM tree
 - inspect and mutate values in memory
 - serialize values back to JSON text
 - destroy values and release owned buffers
-- report detailed errors when parsing or validation fails
+- report detailed errors when parsing fails
 
 ## Public surface
 
@@ -28,7 +28,7 @@ The exported header currently provides these function groups:
 - `jsonc_value`: opaque JSON node handle
 - `jsonc_type`: node kind enumeration
 - `jsonc_format`: serializer output mode
-- `jsonc_error`: parse and validation diagnostics
+- `jsonc_error`: parse diagnostics
 - `jsonc_allocator`: custom allocation callbacks
 
 ## How to read the API pages
@@ -64,7 +64,7 @@ The public header currently exports a small but complete set of basic operations
 - create null, boolean, and string values
 - serialize values and free serialized output
 
-If you need array indexing, object removal, file opening, or file closing, handle that in your application code or add the missing API surface before documenting it.
+If you need array indexing, object removal, file opening, or file closing, handle that in your application code. Those helpers are not exported yet.
 
 ## Typical flow
 

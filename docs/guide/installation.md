@@ -5,7 +5,7 @@ description: Build and package json-c with CMake, pkg-config, and common package
 
 # Installation
 
-json-c is intended to be easy to consume from source trees, package managers, and superbuilds.
+json-c is designed to be easy to consume from source trees, package managers, and superbuilds.
 
 ## Build from source
 
@@ -33,8 +33,6 @@ pkg-config --cflags --libs json-c
 - vcpkg: manifest support via `vcpkg.json`
 - Conan: recipe support via `conanfile.py`
 - xmake: build and package support via `xmake.lua`
-- Homebrew: future formula support
-- MSYS2: future mingw packaging
 
 ## Language support
 
@@ -61,3 +59,4 @@ If you need stricter portability, keep to the subset required by your compiler a
 - src/ for implementation
 - tests/ for unit and regression coverage
 - examples/ for compile-tested usage samples
+- docs/ for the VitePress documentation site

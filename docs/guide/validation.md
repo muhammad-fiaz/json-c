@@ -5,16 +5,15 @@ description: Syntax, UTF-8, depth, duplicate-key, and size validation policies.
 
 # Validation
 
-json-c treats validation as a first-class concern so applications can decide how strict they want to be before accepting input from untrusted sources.
+json-c treats validation as a first-class concern by surfacing syntax errors, escape problems, and exact input locations.
 
 ## Validation checks
 
 - Syntax validation for malformed JSON
-- UTF-8 validation for string content
-- Maximum nesting depth
-- Maximum document size
-- Duplicate key detection
-- Strict versus relaxed parse modes
+- UTF-8 conversion for `\uXXXX` escapes
+- Unescaped control-character rejection inside strings
+- Trailing-data rejection after a complete document
+- Detailed error location reporting
 
 ## Error reporting
 
@@ -28,7 +27,14 @@ Every parse failure should provide:
 
 ## Recommended policy
 
-- use strict mode for network input
-- use relaxed mode only for trusted internal inputs
-- set explicit depth limits for user-controlled documents
-- reject duplicate keys when configuration correctness matters
+- treat external input as untrusted
+- check the returned error object before acting on a failure
+- keep file handling and schema checks in application code
+- reject or log malformed input instead of trying to continue
+
+## What is not configurable yet
+
+- strict versus relaxed parse modes
+- duplicate-key policy toggles
+- document-size limits through the public API
+- caller-selectable parser flags

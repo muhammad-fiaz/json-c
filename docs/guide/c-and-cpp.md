@@ -20,7 +20,7 @@ json-c is written in ISO C and exposes a plain C API that can be used directly f
 
 json-c currently exports a focused set of operations for parsing, serialization, value lifecycle management, boolean mutation, string inspection, and object lookup. See the [Operations guide](./operations) for the current function matrix.
 
-Array insertion, object deletion, and file opening/closing are handled by your application or future library extensions.
+Arrays and object mutation are represented in the DOM, but the exported helper set is intentionally small today.
 
 ## C usage
 
