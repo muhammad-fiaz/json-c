@@ -1,7 +1,7 @@
 import { defineConfig } from "vitepress";
 import llmstxt from "vitepress-plugin-llms";
 
-export const SITE_URL = "https://muhammad-fiaz.github.io/json-c/";
+export const SITE_URL = "https://muhammad-fiaz.github.io/json-c";
 export const SITE_NAME = "JSON-C";
 export const SITE_DESCRIPTION = "JSON-C is a lightweight, modular, dependency-free JSON library for C and C++ with parsing, serialization, DOM editing, mutation, and diagnostics.";
 export const GA_ID = "G-6BVYCRK57P";
@@ -20,6 +20,7 @@ const authorSchema = {
   ],
 };
 
+
 export default defineConfig({
   lang: "en-US",
   title: SITE_NAME,
@@ -28,7 +29,7 @@ export default defineConfig({
   lastUpdated: true,
   cleanUrls: false,
   sitemap: {
-    hostname: SITE_URL,
+    hostname: `${SITE_URL}/`,
   },
   vite: {
     plugins: [llmstxt()],
@@ -61,7 +62,6 @@ export default defineConfig({
     ["meta", { name: "twitter:image:alt", content: "json-c - Lightweight ISO C JSON library" }],
     ["meta", { name: "twitter:site", content: "@muhammadfiaz_" }],
     ["meta", { name: "twitter:creator", content: "@muhammadfiaz_" }],
-    ["link", { rel: "canonical", href: SITE_URL }],
     ["link", { rel: "icon", href: "/json-c/logo.svg" }],
     ["link", { rel: "apple-touch-icon", href: "/json-c/logo.svg" }],
     ["meta", { name: "theme-color", content: "#0f172a" }],
@@ -82,11 +82,6 @@ gtag('config', '${GA_ID}');`,
             {},
             `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${GTM_ID}');`,
           ],
-          [
-            "noscript",
-            {},
-            `<iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`,
-          ],
         ] as [string, Record<string, string>, string][])
       : []),
     [
@@ -97,13 +92,28 @@ gtag('config', '${GA_ID}');`,
         crossorigin: "anonymous",
       },
     ],
+    // Microsoft Clarity
+    [
+      "script",
+      {},
+      `(function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "z5vdzih779");`,
+    ],
   ],
   ignoreDeadLinks: [/.*\.c$/, /.*\.h$/, /.*\.svg$/],
+
+  transformHtml(html) {
+    const noscript = `<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>`;
+    return html.replace(/<body([^>]*)>/, `<body$1>\n    ${noscript}`);
+  },
+
   transformPageData(pageData: any) {
     const pageTitle = pageData.title || SITE_NAME;
     const pageDescription = pageData.description || SITE_DESCRIPTION;
-    const normalizedPath = pageData.relativePath.replace(/\.md$/, "").replace(/(^|\/)index$/, "$1").replace(/\/$/, "");
-    const canonicalUrl = normalizedPath.length > 0 ? `${SITE_URL}${normalizedPath}` : SITE_URL;
+    const canonicalUrl = `${SITE_URL}/${pageData.relativePath.replace(/(^|\/)index\.md$/, "$1").replace(/\.md$/, ".html")}`;
     const isHome = pageData.relativePath === "index.md";
     const lastUpdated = pageData.lastUpdated ? new Date(pageData.lastUpdated).toISOString() : new Date().toISOString();
 
@@ -183,53 +193,18 @@ gtag('config', '${GA_ID}');`,
     }
     graph.push(primarySchema);
 
-    const breadcrumbs: any[] = [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: SITE_URL,
-      },
+    const breadcrumbs: Record<string, unknown>[] = [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
     ];
-
     if (!isHome) {
-      const pathParts = pageData.relativePath.replace(/\.md$/, "").split("/").filter(Boolean);
-      const breadcrumbParts = pathParts[pathParts.length - 1] === "index" ? pathParts.slice(0, -1) : pathParts;
-
-      if (breadcrumbParts.length === 1) {
-        breadcrumbs.push({
-          "@type": "ListItem",
-          position: 2,
-          name: pageTitle,
-          item: canonicalUrl,
-        });
-      } else if (breadcrumbParts.length > 1) {
-        let currentPath = SITE_URL;
-
-        breadcrumbParts.slice(0, -1).forEach((part: string, index: number) => {
-          currentPath += `${part}/`;
-          const name = part.split("-").map((segment: string) => segment.charAt(0).toUpperCase() + segment.slice(1)).join(" ");
-          breadcrumbs.push({
-            "@type": "ListItem",
-            position: index + 2,
-            name,
-            item: currentPath,
-          });
-        });
-
-        breadcrumbs.push({
-          "@type": "ListItem",
-          position: breadcrumbParts.length + 1,
-          name: pageTitle,
-          item: canonicalUrl,
-        });
-      }
+      breadcrumbs.push({
+        "@type": "ListItem",
+        position: 2,
+        name: pageTitle,
+        item: canonicalUrl,
+      });
     }
-
-    graph.push({
-      "@type": "BreadcrumbList",
-      itemListElement: breadcrumbs,
-    });
+    graph.push({ "@type": "BreadcrumbList", itemListElement: breadcrumbs });
 
     pageData.frontmatter.head.push([
       "script",
